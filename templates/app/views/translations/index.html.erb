@@ -5,6 +5,20 @@
     <%= f.label :text, "English text" %>
     <%= f.text_area :text, rows: 5, class: "form-control" %>
   </div>
+  <div class="mb-3">
+    <%= f.label :target_language, "Target language" %>
+    <%= f.select :target_language, options_for_select(["Urdu", "Hindi", "Arabic", "Spanish", "French"], "Urdu"), {}, class: "form-select" %>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <%= f.label :model, "AI model (optional)" %>
+      <%= f.text_field :model, placeholder: ENV.fetch("AI_MODEL", "gpt-4o-mini"), class: "form-control" %>
+    </div>
+    <div class="col-md-6">
+      <%= f.label :temperature, "Temperature" %>
+      <%= f.number_field :temperature, in: 0.0..1.0, step: 0.1, value: 0.2, class: "form-control" %>
+    </div>
+  </div>
   <div>
     <%= f.submit "Translate", class: "btn btn-primary" %>
   </div>
@@ -12,4 +26,22 @@
 
 <div id="translation_result">
   <%= render partial: "translation_result", locals: { translation: nil } %>
+</div>
+
+<div class="mt-4">
+  <h3>Recent translations</h3>
+  <% history = session[:translation_history] || [] %>
+  <% if history.any? %>
+    <ul class="list-group">
+      <% history.each do |h| %>
+        <li class="list-group-item">
+          <strong><%= h[:target] %></strong> — <%= h[:text] %>
+          <div class="small text-muted">Model: <%= h[:model].presence || ENV.fetch("AI_MODEL", "gpt-4o-mini") %>, Temp: <%= h[:temperature] %>, <%= h[:at] %></div>
+          <div class="mt-2"><%= h[:translation] %></div>
+        </li>
+      <% end %>
+    </ul>
+  <% else %>
+    <p class="text-muted">No recent translations.</p>
+  <% end %>
 </div>

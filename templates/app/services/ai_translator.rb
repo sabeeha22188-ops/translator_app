@@ -6,20 +6,26 @@ class AiTranslator
   end
 
   # Translate English text to Urdu using the AI provider.
+  # Translate text to a target language using the AI provider.
+  # - `target_language` examples: "Urdu", "Hindi", "Spanish".
+  # - `model` and `temperature` are passed to the provider.
   # Returns plain text translation.
-  def translate_to_urdu(text)
+  def translate(text, target_language: "Urdu", model: nil, temperature: 0.2)
+    model ||= ENV.fetch("AI_MODEL", "gpt-4o-mini")
+
     prompt = <<~PROMPT
-      Translate the following English text to Urdu. Keep tone natural and concise.
+      Detect the source language automatically. Translate the following text to #{target_language}.
+      Keep tone natural and concise.
 
       Text: #{text}
 
-      Urdu translation:
+      #{target_language} translation:
     PROMPT
 
     response = @client.chat(parameters: {
-      model: ENV.fetch("AI_MODEL", "gpt-4o-mini"),
+      model: model,
       messages: [{ role: "user", content: prompt }],
-      temperature: 0.2,
+      temperature: temperature.to_f,
       max_tokens: 800
     })
 
