@@ -1,0 +1,15 @@
+<h1>English → Urdu Translator</h1>
+
+<%= form_with url: translations_path, method: :post, local: false do |f| %>
+  <div class="mb-3">
+    <%= f.label :text, "English text" %>
+    <%= f.text_area :text, rows: 5, class: "form-control" %>
+  </div>
+  <div>
+    <%= f.submit "Translate", class: "btn btn-primary" %>
+  </div>
+<% end %>
+
+<div id="translation_result">
+  <%= render partial: "translation_result", locals: { translation: nil } %>
+</div>
